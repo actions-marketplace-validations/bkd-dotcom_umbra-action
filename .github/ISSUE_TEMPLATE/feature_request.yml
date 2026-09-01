@@ -1,0 +1,49 @@
+name: Feature request
+description: Suggest a capability or input for the Signetry Admission action.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This repo is the **GitHub Action** (Apache-2.0) — inputs, outputs, the
+        composite steps, SARIF upload, the PR comment, runner/sandbox setup.
+        Changes to the governance logic itself (contract, injection quarantine,
+        required checks, verifier, earned authority, receipts) belong in
+        [signetry-core](https://github.com/Signetry/core/issues).
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What can't you do today? Describe the workflow you are trying to build, not just the feature you have in mind.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you'd like the action to do
+      description: If it's a new input or output, name it and give its default. If it changes when the check fails, say so explicitly.
+    validations:
+      required: true
+  - type: textarea
+    id: workflow
+    attributes:
+      label: How it would look in a workflow
+      render: yaml
+      placeholder: |
+        - uses: Signetry/action@v1
+          with:
+            min-authority: "1"
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Including anything you can already do with existing inputs, or by wrapping the action in your own steps.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This is about the Action, not the governance logic in signetry-core.
+          required: true
+        - label: It does not require the Action to merge a PR (`auto_merge` is always false by design — Signetry governs the agent; a human merges).
+          required: true

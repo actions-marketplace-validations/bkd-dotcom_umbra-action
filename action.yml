@@ -23,7 +23,7 @@ inputs:
     required: false
     default: ""
   signetry-version:
-    description: "Version tag of signetry-core to install from source (e.g. '0.5.3'). Blank installs the latest hardened release. signetry-core is source-available (All Rights Reserved) and installed from its source repo, not PyPI."
+    description: "Version tag of signetry-core to install from source (e.g. '0.5.3'). Blank installs the latest hardened release. signetry-core is source-available under BUSL-1.1 (converting to Apache-2.0 on 2030-08-31) and is installed from its source repo, not PyPI."
     required: false
     default: ""
   require-sandbox:
@@ -104,10 +104,11 @@ runs:
           # Install the pinned tag from the source repository.
           pip install "signetry-core @ git+https://github.com/Signetry/core@v$VER"
         else
-          # signetry-core is distributed from its source repository (All Rights Reserved;
-          # not published to PyPI). Install the latest release tag. 0.5.0+ carries the
-          # capability graph, G1/G2/G3 gates, the `signetry comment` renderer, and the
-          # SAST detection engine (needed for `scan: true`).
+          # signetry-core is distributed from its source repository (source-available
+          # under BUSL-1.1; not published to PyPI). Install the latest release tag.
+          # 0.5.0+ carries the capability graph, G1/G2/G3 gates, the
+          # `signetry comment` renderer, and the SAST detection engine (needed for
+          # `scan: true`).
           pip install "signetry-core @ git+https://github.com/Signetry/core@v0.7.0"
         fi
 

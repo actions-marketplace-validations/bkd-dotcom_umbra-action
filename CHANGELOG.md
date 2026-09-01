@@ -5,6 +5,29 @@ Pin `@v1` (moving) or an exact `@v0.1.3+` tag.
 
 ## [Unreleased]
 
+### Changed — licensing (open core)
+
+- **This Action is now open source under Apache-2.0.** A real `LICENSE` file is in
+  the repo root. The previous "All Rights Reserved" notice is withdrawn: you may
+  use, fork, modify, distribute, and commercialize this Action, including in
+  commercial and closed-source products, with no permission needed.
+- Signetry moved to an **open-core** model: the whole integration surface (this
+  Action, the editor/agent plugins, the pre-commit guard, the eval suite) is
+  Apache-2.0, while the engine
+  [`signetry-core`](https://github.com/Signetry/core) is source-available under
+  **BUSL-1.1** and converts to Apache-2.0 on **2030-08-31**. See
+  [LICENSING.md](https://github.com/Signetry/signetry/blob/main/LICENSING.md).
+- **The CLA is unchanged and still required.** Open core needs relicensing rights
+  so a contribution made here can later move into the engine; signing takes away
+  none of the rights Apache-2.0 grants you. `CLA.md`, `CONTRIBUTING.md`,
+  `CONTRIBUTORS.md`, and the docs were rewritten to say so accurately.
+- **The CLA's fallback licence grant is now non-exclusive.** It previously granted the
+  Owner an *exclusive* licence where copyright assignment is not permitted by law, which
+  would have stripped contributors of the right to use their own contribution — directly
+  contradicting the rights the LICENSE grants everyone. The CLA text is now identical
+  across all Signetry repositories (bar the engine/integration licence wording) so the
+  legal terms cannot drift per-repo again. See [CLA.md](CLA.md) §2–3.
+
 ### Changed — Signetry naming
 
 - The Marketplace listing name is **Signetry Admission** (tagline: "Seal every

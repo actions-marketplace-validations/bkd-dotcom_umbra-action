@@ -1,6 +1,7 @@
 # Signetry Admission — GitHub Action
 
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Signetry%20Admission-purple?logo=github)](https://github.com/marketplace/actions/signetry-admission)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Latest release](https://img.shields.io/github/v/release/Signetry/action?sort=semver)](https://github.com/Signetry/action/releases)
 
@@ -83,7 +84,7 @@ jobs:
 | `require-sandbox` | `false` | Fail closed if code-executing checks (npm/pip install, go/cargo build) can't run in a real filesystem/network sandbox. |
 | `scan` | `false` | Also run the **SAST detection engine** over the checkout and upload SARIF to code scanning (7 languages, cross-file taint, deterministic/offline; needs `signetry-core >= 0.5.0`). |
 | `scan-fail-on` | `""` | With `scan`, fail the check if any finding is at/above this severity (`critical`/`high`/`medium`/`low`/`info`). Blank = report-only. |
-| `signetry-version` | latest | Pin a specific `signetry-core` version **tag** installed from source (blank installs the latest hardened release). signetry-core is source-available and not on PyPI. |
+| `signetry-version` | latest | Pin a specific `signetry-core` version **tag** installed from source (blank installs the latest hardened release). signetry-core is BUSL-1.1 (source-available, converting to Apache-2.0 on 2030-08-31) and is installed from its source repo, not PyPI. |
 | `python-version` | `3.12` | Python to run on. |
 
 ## Outputs
@@ -97,8 +98,8 @@ jobs:
 
 ## How it works
 
-This action is a thin wrapper over `signetry-core` (source-available; installed from
-its source repo, not PyPI). It stages the
+This action is Apache-2.0 and is a thin wrapper over `signetry-core` (BUSL-1.1,
+source-available; installed from its source repo, not PyPI). It stages the
 PR's change as a working-tree diff, runs `signetry admit`, and enforces the earned
 authority. On Linux runners it installs bubblewrap so required checks run under a
 real filesystem/network **sandbox** (the tier is recorded truthfully in every
@@ -110,4 +111,12 @@ Part of the [Signetry platform](https://github.com/Signetry/signetry) — see th
 
 ## License
 
-**Copyright (c) 2026 Binay Dalai. All rights reserved.** This code is not open source. You may not use, copy, modify, distribute, or commercialize it for your own personal or commercial purposes without explicit written permission from the author, who alone retains the right to use and monetize this project. See [CONTRIBUTING.md](CONTRIBUTING.md).
+[Apache-2.0](LICENSE). Use it, fork it, ship it commercially — no strings.
+
+This repository is part of Signetry's [open-core model](https://github.com/Signetry/signetry/blob/main/LICENSING.md):
+the **integration surface is Apache-2.0** so anyone can add an agent, an editor, or a
+CI adapter, while the engine ([`Signetry/core`](https://github.com/Signetry/core)) is
+source-available under BUSL-1.1 and converts to Apache-2.0 on 2030-08-31.
+
+Contributions are accepted under the [CLA](CLA.md) — it lets us move a well-built
+adapter into the engine later without asking every contributor for permission again.

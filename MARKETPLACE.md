@@ -161,7 +161,8 @@ governance layer between them. Injection detection is layered and defense-in-dep
 (on-disk quarantine + contract + independent verifier + earned-authority cap), so
 safety does not depend on catching every phrasing. Check isolation is the
 strongest tier that preflights on your runner and is recorded truthfully in every
-receipt. All Rights Reserved (not open source).
+receipt. This Action is open source under Apache-2.0; the `signetry-core` engine it
+wraps is source-available under BUSL-1.1 and converts to Apache-2.0 on 2030-08-31.
 
 ---
 
@@ -195,5 +196,5 @@ from the source repo; not on PyPI).
 ```
 Signetry Admission is live on the GitHub Marketplace: a required check that governs
 any coding agent's PR — Claude Code, Codex, Cursor, Copilot, Devin — with a
-signed receipt. Nothing merges without one. All Rights Reserved.
+signed receipt. Nothing merges without one. Apache-2.0.
 ```
