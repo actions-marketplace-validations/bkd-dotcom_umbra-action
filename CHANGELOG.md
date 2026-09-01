@@ -3,7 +3,7 @@
 Follows [Keep a Changelog](https://keepachangelog.com/) / [SemVer](https://semver.org/).
 Pin `@v1` (moving) or an exact `@v0.1.3+` tag.
 
-## [Unreleased]
+## [0.5.0] — 2026-09-01
 
 ### Changed — licensing (open core)
 
@@ -28,6 +28,27 @@ Pin `@v1` (moving) or an exact `@v0.1.3+` tag.
   across all Signetry repositories (bar the engine/integration licence wording) so the
   legal terms cannot drift per-repo again. See [CLA.md](CLA.md) §2–3.
 
+### Changed
+
+- Default `signetry-core` install pinned to
+  `git+https://github.com/Signetry/core@v0.8.0` (was `@v0.6.0` as of `v0.4.0`; an
+  intermediate bump to `@v0.7.0` landed on `main` and was never recorded here).
+  `v0.8.0` brings the receipt conformance spec + suite, the policy registry
+  (`signetry policies`, `signetry init --policy`), and placeholder-provenance
+  reporting, following the signetry-core v0.8.0 release.
+- The advisory reviewer workflow installs `signetry-reviewer@v0.3.0` (was `@v0.2.0`),
+  following the signetry-reviewer v0.3.0 release.
+- `@v1` moved to this release.
+
+### Fixed
+
+- **`MARKETPLACE.md` advertised an exact pin that was two releases stale.** The
+  Marketplace listing told readers to "Pin `@v1` (moving) or `@v0.2.0` (exact)" long
+  after `v0.3.1` and `v0.4.0` shipped, so anyone following it verbatim pinned an
+  Action that predates the rename. It now names the current release.
+
+## [0.4.0] — 2026-08-12
+
 ### Changed — Signetry naming
 
 - The Marketplace listing name is **Signetry Admission** (tagline: "Seal every
@@ -46,6 +67,7 @@ Pin `@v1` (moving) or an exact `@v0.1.3+` tag.
   is `.signetry/admission.yaml`.
  - Advisory reviewer workflow installs **`signetry-reviewer`** from
    `git+https://github.com/Signetry/reviewer@v0.1.2`.
+- `@v1` moved to this release.
 
 ## [0.3.1] — 2026-08-03
 

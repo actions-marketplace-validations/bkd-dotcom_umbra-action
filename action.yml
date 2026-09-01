@@ -109,7 +109,7 @@ runs:
           # 0.5.0+ carries the capability graph, G1/G2/G3 gates, the
           # `signetry comment` renderer, and the SAST detection engine (needed for
           # `scan: true`).
-          pip install "signetry-core @ git+https://github.com/Signetry/core@v0.7.0"
+          pip install "signetry-core @ git+https://github.com/Signetry/core@v0.8.0"
         fi
 
     - name: Detection scan (optional)
