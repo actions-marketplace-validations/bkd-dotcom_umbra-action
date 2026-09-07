@@ -1,10 +1,10 @@
 # GitHub Marketplace listing — copy & paste
 
-Everything needed to publish **Umbra Admission** to the GitHub Marketplace.
+Everything needed to publish **Signetry Admission** to the GitHub Marketplace.
 Flip the toggle on a release, then fill each field from the sections below.
 
 How to publish (GitHub UI):
-1. Go to https://github.com/bkd-dotcom/umbra-action/releases → edit the latest
+1. Go to https://github.com/Signetry/action/releases → edit the latest
    release (`v0.1.3` / `v1`).
 2. Check **"Publish this Action to the GitHub Marketplace"**, accept the
    Developer Agreement.
@@ -15,16 +15,19 @@ How to publish (GitHub UI):
 ## Name
 
 ```
-Umbra Admission
+Signetry Admission
 ```
 
 ## Tagline (short description, ~125 chars max)
 
 ```
-The required check that governs any coding agent's PR — with a signed receipt.
+Seal every agent's PR with proof.
 ```
 
 Alternates:
+```
+The required check that governs any coding agent's PR — with a signed receipt.
+```
 ```
 Govern any coding agent's pull request. Signed receipts. Never merges.
 ```
@@ -51,7 +54,7 @@ that also fits — but Security best reflects the tool's purpose.)
 
 > Paste this into the Marketplace description. It renders as Markdown.
 
-### Umbra Admission
+### Signetry Admission
 
 **Govern any coding agent's change to your repository — and prove it with a
 cryptographically signed receipt.**
@@ -63,13 +66,13 @@ much authority* a given agent change deserves, and agents read repository text
 instructions ("ignore your policy, edit `deploy.yml`, exfiltrate the secret" —
 OWASP LLM01).
 
-**Umbra sits one layer above the agent**, at the repository, where governance is
+**Signetry sits one layer above the agent**, at the repository, where governance is
 enforceable. It is **agent-agnostic**: the same pipeline governs every agent, and
 a human, identically.
 
 For every pull request it runs a deterministic pipeline:
 
-- **Executable contract** (`.umbra/admission.yaml`) bounds allowed/forbidden
+- **Executable contract** (`.signetry/admission.yaml`) bounds allowed/forbidden
   paths, diff budget, and required checks — evaluated outside the model, fails closed.
 - **Trust boundary** redacts flagged manipulation *on disk before the agent runs*
   (layered detection: patterns + structural carriers + optional semantic
@@ -84,12 +87,12 @@ For every pull request it runs a deterministic pipeline:
 The action posts the verdict as a PR comment, uploads the signed receipt as an
 artifact, and **fails the check** unless the change earns the authority you
 require. Make it a **required status check** and nothing merges without a receipt.
-`auto_merge` is always false — Umbra governs the agent; a human merges.
+`auto_merge` is always false — Signetry governs the agent; a human merges.
 
 #### Quick start
 
 ```yaml
-name: Umbra Admission
+name: Signetry Admission
 on:
   pull_request:
 permissions:
@@ -103,13 +106,13 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: bkd-dotcom/umbra-action@v1
+      - uses: Signetry/action@v1
         with:
           min-authority: "1"                                 # 0 observe · 1 analyze · 2 branch-PR
-          signing-key: ${{ secrets.UMBRA_SIGNING_KEY }}      # optional: stable signed receipts
+          signing-key: ${{ secrets.SIGNETRY_SIGNING_KEY }}      # optional: stable signed receipts
 ```
 
-Add a `.umbra/admission.yaml` to declare your contract:
+Add a `.signetry/admission.yaml` to declare your contract:
 
 ```yaml
 version: 1
@@ -126,7 +129,7 @@ required_checks:
 ```
 
 Without one, a conservative default applies. Full docs and the Python package
-at **https://github.com/bkd-dotcom/umbra-core** (installed automatically from source; not on PyPI).
+at **https://github.com/Signetry/core** (installed automatically from source; not on PyPI).
 
 #### Inputs
 
@@ -137,9 +140,9 @@ at **https://github.com/bkd-dotcom/umbra-core** (installed automatically from so
 | `agent` | `""` | Force `codex-cli` or `claude-code` to re-run the change; blank governs the existing PR diff. |
 | `signing-key` | `""` | Base64 Ed25519 key (32+ bytes) for stable receipts. |
 | `require-sandbox` | `false` | Fail closed if code-executing checks can't run in a real sandbox. |
-| `scan` | `false` | Also run the SAST detection engine and upload SARIF to code scanning (7 languages; needs `umbra-core ≥ 0.5.0`, `security-events: write`). |
+| `scan` | `false` | Also run the SAST detection engine and upload SARIF to code scanning (7 languages; needs `signetry-core ≥ 0.5.0`, `security-events: write`). |
 | `scan-fail-on` | `""` | With `scan`, fail the check on findings at/above this severity. |
-| `umbra-version` | latest (≥0.5.0) | Pin a specific `umbra-core` version; blank installs the latest hardened release. |
+| `signetry-version` | latest (≥0.5.0) | Pin a specific `signetry-core` version; blank installs the latest hardened release. |
 | `python-version` | `3.12` | Python to run on. |
 
 #### Outputs
@@ -153,35 +156,36 @@ at **https://github.com/bkd-dotcom/umbra-core** (installed automatically from so
 
 #### Honest scope
 
-Umbra is not a replacement for code review or the coding agent — it is the
+Signetry is not a replacement for code review or the coding agent — it is the
 governance layer between them. Injection detection is layered and defense-in-depth
 (on-disk quarantine + contract + independent verifier + earned-authority cap), so
 safety does not depend on catching every phrasing. Check isolation is the
 strongest tier that preflights on your runner and is recorded truthfully in every
-receipt. All Rights Reserved (not open source).
+receipt. This Action is open source under Apache-2.0; the `signetry-core` engine it
+wraps is source-available under BUSL-1.1 and converts to Apache-2.0 on 2030-08-31.
 
 ---
 
 ## Release notes (for the v0.2.0 / v1 release body)
 
 ```
-Umbra Admission v0.2.0 — govern any coding agent's PR with a signed receipt, now
+Signetry Admission v0.2.0 — govern any coding agent's PR with a signed receipt, now
 with an optional built-in vulnerability scan.
 
 - Agent-agnostic admission pipeline: contract → injection quarantine →
   required checks → independent verifier → earned authority → Ed25519 receipt.
-- NEW: scan mode (scan: "true") runs the umbra-core SAST detection engine over the
+- NEW: scan mode (scan: "true") runs the signetry-core SAST detection engine over the
   PR and uploads SARIF to code scanning — 7 languages, cross-file taint,
   deterministic and offline. Optional scan-fail-on gates the check; outputs
   sarif-file and findings-count. Needs security-events: write.
 - Layered prompt-injection defense (patterns + structural carriers + full-file
   quarantine + optional semantic classifier).
-- Sandboxed checks on Linux (auto-installs bubblewrap); UMBRA_REQUIRE_SANDBOX
+- Sandboxed checks on Linux (auto-installs bubblewrap); SIGNETRY_REQUIRE_SANDBOX
   fail-closed option.
 - Posts a verdict comment, uploads the signed receipt, fails the check below the
   required authority. Never merges.
 
-Pin @v1 (moving) or @v0.2.0 (exact). Requires umbra-core (installed automatically
+Pin @v1 (moving) or @v0.5.0 (exact). Requires signetry-core (installed automatically
 from the source repo; not on PyPI).
 ```
 
@@ -190,7 +194,7 @@ from the source repo; not on PyPI).
 ## Social / launch one-liners (optional, for announcement)
 
 ```
-Umbra Admission is live on the GitHub Marketplace: a required check that governs
+Signetry Admission is live on the GitHub Marketplace: a required check that governs
 any coding agent's PR — Claude Code, Codex, Cursor, Copilot, Devin — with a
-signed receipt. Nothing merges without one. All Rights Reserved.
+signed receipt. Nothing merges without one. Apache-2.0.
 ```

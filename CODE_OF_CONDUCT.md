@@ -52,7 +52,7 @@ an individual is officially representing the community in public spaces.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the maintainers via
-[GitHub private vulnerability reporting](https://github.com/bkd-dotcom/umbra-action/security/advisories/new)
+[GitHub private vulnerability reporting](https://github.com/Signetry/action/security/advisories/new)
 or by opening a confidential issue. All complaints will be reviewed and
 investigated promptly and fairly.
 

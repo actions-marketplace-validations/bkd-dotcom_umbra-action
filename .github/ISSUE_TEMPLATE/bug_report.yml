@@ -1,14 +1,14 @@
 name: Bug report
-description: Report a problem with the Umbra Admission action.
+description: Report a problem with the Signetry Admission action.
 labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
         For **security vulnerabilities** do NOT use this form — see
-        [SECURITY.md](https://github.com/bkd-dotcom/umbra-action/security/policy).
+        [SECURITY.md](https://github.com/Signetry/action/security/policy).
         Governance-logic bugs (contract, verifier, receipts) belong in
-        [umbra-core](https://github.com/bkd-dotcom/umbra-core/issues).
+        [signetry-core](https://github.com/Signetry/core/issues).
   - type: input
     id: version
     attributes:

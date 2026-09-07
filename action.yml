@@ -1,8 +1,8 @@
-name: "Umbra Admission"
-description: "Govern any coding agent's PR with an admission pipeline and a signed receipt. Never merges."
+name: "Signetry Admission"
+description: "Seal every agent's PR with proof. Govern any coding agent's PR with an admission pipeline and a signed receipt. Never merges."
 author: "Binay Dalai"
 branding:
-  icon: "shield"
+  icon: "award"
   color: "purple"
 
 inputs:
@@ -22,8 +22,8 @@ inputs:
     description: "Base64 Ed25519 signing key (32+ bytes) for stable receipts. Falls back to an honestly-flagged dev key if unset."
     required: false
     default: ""
-  umbra-version:
-    description: "Version tag of umbra-core to install from source (e.g. '0.5.3'). Blank installs the latest hardened release. umbra-core is source-available (All Rights Reserved) and installed from its source repo, not PyPI."
+  signetry-version:
+    description: "Version tag of signetry-core to install from source (e.g. '0.5.3'). Blank installs the latest hardened release. signetry-core is source-available under BUSL-1.1 (converting to Apache-2.0 on 2030-08-31) and is installed from its source repo, not PyPI."
     required: false
     default: ""
   require-sandbox:
@@ -31,7 +31,7 @@ inputs:
     required: false
     default: "false"
   scan:
-    description: "If 'true', also run the umbra SAST detection engine over the checkout and upload SARIF (uploaded to code scanning if the workflow has security-events: write). Deterministic, offline; requires umbra-core >= 0.5.0."
+    description: "If 'true', also run the signetry SAST detection engine over the checkout and upload SARIF (uploaded to code scanning if the workflow has security-events: write). Deterministic, offline; requires signetry-core >= 0.5.0."
     required: false
     default: "false"
   scan-fail-on:
@@ -71,9 +71,9 @@ runs:
         # Real check isolation (the 'sandboxed' enforcement tier) needs bubblewrap
         # AND unprivileged user namespaces. Ubuntu 24.04 (GitHub runners) restricts
         # unprivileged userns via AppArmor by default, which makes bwrap fail its
-        # preflight and Umbra honestly fall back to host-restricted. We install
+        # preflight and Signetry honestly fall back to host-restricted. We install
         # bwrap and relax the userns clamp so the sandbox can initialize. All
-        # non-fatal: if anything fails, Umbra records the true (lower) tier.
+        # non-fatal: if anything fails, Signetry records the true (lower) tier.
         if [ "$(uname -s)" = "Linux" ]; then
           if ! command -v bwrap >/dev/null 2>&1 && command -v apt-get >/dev/null 2>&1; then
             sudo apt-get update -qq && sudo apt-get install -y -qq bubblewrap || \
@@ -84,31 +84,32 @@ runs:
           sudo sysctl -w kernel.unprivileged_userns_clone=1 >/dev/null 2>&1 || true
         fi
         if command -v bwrap >/dev/null 2>&1; then
-          echo "bubblewrap installed. Umbra will preflight it at check time and record the true tier (sandboxed if it initializes, else network-isolated/host-restricted)."
+          echo "bubblewrap installed. Signetry will preflight it at check time and record the true tier (sandboxed if it initializes, else network-isolated/host-restricted)."
         else
           echo "::notice::bubblewrap not installed on this runner — required checks will use the strongest tier that preflights, recorded truthfully in the receipt."
         fi
 
-    - name: Install umbra-core
+    - name: Install signetry-core
       shell: bash
       env:
-        IN_UMBRA_VERSION: ${{ inputs.umbra-version }}
+        IN_SIGNETRY_VERSION: ${{ inputs.signetry-version }}
       run: |
         set -euo pipefail
-        VER="${IN_UMBRA_VERSION:-}"
+        VER="${IN_SIGNETRY_VERSION:-}"
         if [ -n "$VER" ]; then
           # Validate: a version tag or ref, no shell metacharacters.
           case "$VER" in
-            *[!0-9.a-zA-Z_-]*) echo "::error::Invalid umbra-version '$VER'"; exit 1 ;;
+            *[!0-9.a-zA-Z_-]*) echo "::error::Invalid signetry-version '$VER'"; exit 1 ;;
           esac
           # Install the pinned tag from the source repository.
-          pip install "umbra-core @ git+https://github.com/bkd-dotcom/umbra-core@v$VER"
+          pip install "signetry-core @ git+https://github.com/Signetry/core@v$VER"
         else
-          # umbra-core is distributed from its source repository (All Rights Reserved;
-          # not published to PyPI). Install the latest release tag. 0.5.0+ carries the
-          # capability graph, G1/G2/G3 gates, the `umbra comment` renderer, and the
-          # SAST detection engine (needed for `scan: true`).
-          pip install "umbra-core @ git+https://github.com/bkd-dotcom/umbra-core@v0.5.4"
+          # signetry-core is distributed from its source repository (source-available
+          # under BUSL-1.1; not published to PyPI). Install the latest release tag.
+          # 0.5.0+ carries the capability graph, G1/G2/G3 gates, the
+          # `signetry comment` renderer, and the SAST detection engine (needed for
+          # `scan: true`).
+          pip install "signetry-core @ git+https://github.com/Signetry/core@v0.8.0"
         fi
 
     - name: Detection scan (optional)
@@ -121,14 +122,14 @@ runs:
         # Layered SAST over the checkout (deterministic, offline). Emits SARIF for
         # code scanning and a findings count. Runs on the pristine checkout BEFORE
         # the admission staging step, so it scans the PR head as-is. Requires
-        # umbra-core >= 0.5.0; older versions won't expose `umbra scan`.
+        # signetry-core >= 0.5.0; older versions won't expose `signetry scan`.
         set -euo pipefail
-        if ! umbra scan --help >/dev/null 2>&1; then
-          echo "::warning::Installed umbra-core has no 'scan' command (needs >= 0.5.0); skipping detection scan."
+        if ! signetry scan --help >/dev/null 2>&1; then
+          echo "::warning::Installed signetry-core has no 'scan' command (needs >= 0.5.0); skipping detection scan."
           echo "sarif_file=" >> "$GITHUB_OUTPUT"; echo "findings_count=0" >> "$GITHUB_OUTPUT"; exit 0
         fi
-        SOUT="${RUNNER_TEMP:-/tmp}/umbra-scan"; mkdir -p "$SOUT"
-        SARIF="$SOUT/umbra.sarif"
+        SOUT="${RUNNER_TEMP:-/tmp}/signetry-scan"; mkdir -p "$SOUT"
+        SARIF="$SOUT/signetry.sarif"
         # Validate the severity input against a fixed set (no shell injection).
         FAIL_ARG=""
         case "${IN_SCAN_FAIL_ON:-}" in
@@ -136,31 +137,31 @@ runs:
           critical|high|medium|low|info) FAIL_ARG="--fail-on ${IN_SCAN_FAIL_ON}" ;;
           *) echo "::error::Invalid scan-fail-on '${IN_SCAN_FAIL_ON}'"; exit 1 ;;
         esac
-        umbra scan . --sarif -o "$SARIF" || true
+        signetry scan . --sarif -o "$SARIF" || true
         COUNT=$(python -c "import json;print(len(json.load(open('$SARIF'))['runs'][0]['results']))" 2>/dev/null || echo 0)
         echo "sarif_file=$SARIF" >> "$GITHUB_OUTPUT"
         echo "findings_count=$COUNT" >> "$GITHUB_OUTPUT"
         echo "SCAN_SARIF=$SARIF" >> "$GITHUB_ENV"
-        echo "umbra scan: $COUNT finding(s); SARIF at $SARIF"
+        echo "signetry scan: $COUNT finding(s); SARIF at $SARIF"
         # Report-only unless a severity gate is set.
         if [ -n "$FAIL_ARG" ]; then
-          umbra scan . $FAIL_ARG >/dev/null || { echo "::error::umbra scan found finding(s) at/above ${IN_SCAN_FAIL_ON}"; exit 1; }
+          signetry scan . $FAIL_ARG >/dev/null || { echo "::error::signetry scan found finding(s) at/above ${IN_SCAN_FAIL_ON}"; exit 1; }
         fi
 
     - name: Upload SARIF to code scanning (optional)
       if: ${{ inputs.scan == 'true' && env.SCAN_SARIF != '' }}
       continue-on-error: true
-      uses: github/codeql-action/upload-sarif@v3
+      uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: ${{ env.SCAN_SARIF }}
-        category: umbra-scan
+        category: signetry-scan
 
     - name: Stage the PR change as a working-tree diff
       shell: bash
       env:
         BASE_SHA: ${{ github.event.pull_request.base.sha }}
       run: |
-        # umbra evaluates the working-tree diff (git diff vs HEAD). For a PR we
+        # signetry evaluates the working-tree diff (git diff vs HEAD). For a PR we
         # soft-reset to the base commit but keep the PR's changes in the working
         # tree, so `git diff` shows exactly what the agent proposed against base.
         # Fail closed if we can't reach the base — otherwise admission would see
@@ -182,13 +183,13 @@ runs:
         # Pass inputs via env — NEVER interpolate ${{ inputs.* }} into a bash body
         # (that is the GitHub Actions script-injection sink; a PR title/branch
         # plumbed into `mission` could otherwise execute arbitrary code).
-        UMBRA_SIGNING_KEY: ${{ inputs.signing-key }}
+        SIGNETRY_SIGNING_KEY: ${{ inputs.signing-key }}
         IN_MISSION: ${{ inputs.mission }}
         IN_AGENT: ${{ inputs.agent }}
         IN_MIN_AUTHORITY: ${{ inputs.min-authority }}
-        UMBRA_ENABLE_CLAUDE_CODE: ${{ inputs.agent == 'claude-code' && 'true' || 'false' }}
-        UMBRA_ENABLE_CODEX_CLI: ${{ inputs.agent == 'codex-cli' && 'true' || 'false' }}
-        UMBRA_REQUIRE_SANDBOX: ${{ inputs.require-sandbox == 'true' && 'true' || 'false' }}
+        SIGNETRY_ENABLE_CLAUDE_CODE: ${{ inputs.agent == 'claude-code' && 'true' || 'false' }}
+        SIGNETRY_ENABLE_CODEX_CLI: ${{ inputs.agent == 'codex-cli' && 'true' || 'false' }}
+        SIGNETRY_REQUIRE_SANDBOX: ${{ inputs.require-sandbox == 'true' && 'true' || 'false' }}
       run: |
         set -euo pipefail
         # Validate untrusted inputs against fixed sets before use.
@@ -201,18 +202,18 @@ runs:
           0|1|2) MIN="${IN_MIN_AUTHORITY}" ;;
           *) echo "::error::Invalid min-authority '${IN_MIN_AUTHORITY}' (expected 0|1|2)"; exit 1 ;;
         esac
-        OUT="${RUNNER_TEMP:-/tmp}/umbra"
+        OUT="${RUNNER_TEMP:-/tmp}/signetry"
         mkdir -p "$OUT"
         echo "OUT=$OUT" >> "$GITHUB_ENV"
-        umbra --json admit . \
+        signetry --json admit . \
           --mission "$IN_MISSION" \
           --label "${GITHUB_REPOSITORY}" \
           $AGENT_ARG \
           --min-authority "$MIN" \
-          --receipt-out "$OUT/umbra-receipt.json" > "$OUT/umbra-report.json" || echo "ADMIT_FAILED=1" >> "$GITHUB_ENV"
+          --receipt-out "$OUT/signetry-receipt.json" > "$OUT/signetry-report.json" || echo "ADMIT_FAILED=1" >> "$GITHUB_ENV"
 
-        LEVEL=$(python -c "import json;print(json.load(open('$OUT/umbra-report.json'))['report']['authority_level'])" 2>/dev/null || echo 0)
-        HASH=$(python -c "import json;print(json.load(open('$OUT/umbra-report.json'))['receipt']['canonical_hash'])" 2>/dev/null || echo "")
+        LEVEL=$(python -c "import json;print(json.load(open('$OUT/signetry-report.json'))['report']['authority_level'])" 2>/dev/null || echo 0)
+        HASH=$(python -c "import json;print(json.load(open('$OUT/signetry-report.json'))['receipt']['canonical_hash'])" 2>/dev/null || echo "")
         echo "authority_level=$LEVEL" >> "$GITHUB_OUTPUT"
         echo "receipt_hash=$HASH" >> "$GITHUB_OUTPUT"
 
@@ -220,26 +221,26 @@ runs:
       if: always()
       uses: actions/upload-artifact@v5
       with:
-        name: umbra-receipt
+        name: signetry-receipt
         path: |
-          ${{ env.OUT }}/umbra-receipt.json
-          ${{ env.OUT }}/umbra-report.json
+          ${{ env.OUT }}/signetry-receipt.json
+          ${{ env.OUT }}/signetry-report.json
         if-no-files-found: ignore
 
-    - name: Render the canonical Umbra PR comment
+    - name: Render the canonical Signetry PR comment
       if: always() && github.event_name == 'pull_request'
       shell: bash
       run: |
-        # Render the canonical Admission Decision Pack comment from umbra-core, so
+        # Render the canonical Admission Decision Pack comment from signetry-core, so
         # the Action posts the exact template the architecture freezes (identical
         # to the hosted UI / CLI). Never interpolate untrusted data into the shell.
         set -euo pipefail
-        OUT="${OUT:-${RUNNER_TEMP:-/tmp}/umbra}"
-        if [ -f "$OUT/umbra-report.json" ]; then
-          umbra comment "$OUT/umbra-report.json" > "$OUT/umbra-comment.md" || \
-            echo "Umbra: admission did not complete; see the workflow logs and the receipt artifact." > "$OUT/umbra-comment.md"
+        OUT="${OUT:-${RUNNER_TEMP:-/tmp}/signetry}"
+        if [ -f "$OUT/signetry-report.json" ]; then
+          signetry comment "$OUT/signetry-report.json" > "$OUT/signetry-comment.md" || \
+            echo "Signetry: admission did not complete; see the workflow logs and the receipt artifact." > "$OUT/signetry-comment.md"
         else
-          echo "Umbra: no admission report was produced; see the workflow logs." > "$OUT/umbra-comment.md"
+          echo "Signetry: no admission report was produced; see the workflow logs." > "$OUT/signetry-comment.md"
         fi
 
     - name: Comment the verdict on the PR
@@ -250,8 +251,8 @@ runs:
           const fs = require('fs');
           const path = require('path');
           const out = process.env.OUT || '';
-          let body = 'Umbra: no admission report was produced.';
-          try { body = fs.readFileSync(path.join(out, 'umbra-comment.md'), 'utf8'); } catch (e) {}
+          let body = 'Signetry: no admission report was produced.';
+          try { body = fs.readFileSync(path.join(out, 'signetry-comment.md'), 'utf8'); } catch (e) {}
           if (context.issue.number) {
             await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body });
           }
@@ -266,8 +267,8 @@ runs:
         # Validate before the numeric comparison (defense against injected values).
         case "${MIN:-1}" in 0|1|2) : ;; *) echo "::error::Invalid min-authority"; exit 1 ;; esac
         case "${LEVEL:-0}" in 0|1|2) : ;; *) LEVEL=0 ;; esac
-        echo "umbra: earned L$LEVEL, required >= L$MIN"
+        echo "signetry: earned L$LEVEL, required >= L$MIN"
         if [ "${LEVEL:-0}" -lt "${MIN:-1}" ]; then
-          echo "::error::Umbra: the change earned only L$LEVEL (required L$MIN). See the receipt artifact."
+          echo "::error::Signetry: the change earned only L$LEVEL (required L$MIN). See the receipt artifact."
           exit 1
         fi

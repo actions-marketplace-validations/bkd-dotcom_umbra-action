@@ -1,8 +1,8 @@
 blank_issues_enabled: true
 contact_links:
   - name: Report a security vulnerability (private)
-    url: https://github.com/bkd-dotcom/umbra-action/security/advisories/new
+    url: https://github.com/Signetry/action/security/advisories/new
     about: Please report vulnerabilities privately — do not open a public issue.
-  - name: Governance logic (umbra-core)
-    url: https://github.com/bkd-dotcom/umbra-core/issues
-    about: Bugs in the contract, verifier, receipts, or pipeline belong in umbra-core.
+  - name: Governance logic (signetry-core)
+    url: https://github.com/Signetry/core/issues
+    about: Bugs in the contract, verifier, receipts, or pipeline belong in signetry-core.

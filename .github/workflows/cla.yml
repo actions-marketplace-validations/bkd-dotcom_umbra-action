@@ -4,7 +4,9 @@ name: CLA
 # before their pull request can be merged. Runs entirely in this repo's Actions —
 # no third-party OAuth app. Signatures are recorded in signatures/cla.json on this
 # repo, so there is a durable, auditable record that each contributor assigned
-# copyright/ownership of their contribution to the Owner.
+# copyright of their contribution to the Owner. This repository is Apache-2.0; the
+# CLA is kept because Signetry is open core and code may need to be relicensed to
+# move across that line (see CLA.md section 3).
 #
 # A contributor signs by commenting the exact statement below on their PR:
 #   I have read the CLA Document and I hereby sign the CLA
@@ -45,10 +47,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           path-to-signatures: "signatures/cla.json"
-          path-to-document: "https://github.com/bkd-dotcom/umbra-action/blob/main/CLA.md"
+          path-to-document: "https://github.com/Signetry/action/blob/main/CLA.md"
           branch: "cla-signatures"
           allowlist: "dependabot[bot],bkd-dotcom"
-          custom-notsigned-prcomment: "Thanks for your contribution! Before it can be merged, please read the **[Contributor License Agreement](https://github.com/bkd-dotcom/umbra-action/blob/main/CLA.md)** — Umbra is **All Rights Reserved**, and by signing you assign copyright/ownership of your contribution to the Owner (you may not use, sell, or commercialize it yourself). To agree, reply with exactly:"
+          custom-notsigned-prcomment: "Thanks for your contribution! Before it can be merged, please read the **[Contributor License Agreement](https://github.com/Signetry/action/blob/main/CLA.md)** — this repo is **Apache-2.0**, and signing does not take away any of the rights that licence gives you. It assigns copyright of your contribution to the Owner so it can be relicensed across Signetry's open-core line (e.g. moved into the BUSL-1.1 engine) without asking every contributor again. To agree, reply with exactly:"
           custom-pr-sign-comment: "I have read the CLA Document and I hereby sign the CLA"
           custom-allsigned-prcomment: "All contributors have signed the CLA. ✅"
           lock-pullrequest-aftermerge: false

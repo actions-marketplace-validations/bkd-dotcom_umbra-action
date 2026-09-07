@@ -1,6 +1,6 @@
 # Security Policy
 
-Umbra Admission is a security tool; we hold its own security to a high bar.
+Signetry Admission is a security tool; we hold its own security to a high bar.
 
 ## Supported versions
 
@@ -19,9 +19,9 @@ fixed in `v0.1.3`. If you pinned an exact old tag, move to `@v1`.
 ## Reporting a vulnerability
 
 Do **not** open a public issue. Use private reporting:
-**https://github.com/bkd-dotcom/umbra-action/security/advisories/new**
+**https://github.com/Signetry/action/security/advisories/new**
 (or report core issues at
-https://github.com/bkd-dotcom/umbra-core/security/advisories/new).
+https://github.com/Signetry/core/security/advisories/new).
 
 ## Safe usage
 
@@ -31,7 +31,7 @@ https://github.com/bkd-dotcom/umbra-core/security/advisories/new).
 - Never plumb attacker-controlled text (PR title, branch, issue body) into the
   `mission` input; the action passes inputs via environment and validates them,
   but least privilege is still the right posture.
-- Use `signing-key: ${{ secrets.UMBRA_SIGNING_KEY }}` for receipts that verify
+- Use `signing-key: ${{ secrets.SIGNETRY_SIGNING_KEY }}` for receipts that verify
   against your pinned key; without it, receipts use a dev key and are flagged
   `key_ephemeral`.
 - For fail-closed check isolation set `require-sandbox: true`.
